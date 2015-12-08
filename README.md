@@ -8,3 +8,6 @@ MATLAB
 
 ## Instructions:
 To run this program, simply use `[NewBoard, Letters] = boggleCV(filename)` where `filename` is the path to the Boggle Board image.
+
+For example, use `[NewBoard, Letters] = boggleCV('./LetImg/tt.jpg')` to run Boglr on one of the sample images.
+Then use `imagesc(NewBoard)` to see the detected board.
