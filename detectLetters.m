@@ -1,11 +1,10 @@
 function [newBoard, theLetters] = detectLetters(board)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+% Input: detected board from detectBoggleBoardPyramid() function
+% Output: smaller, more accurate board, and letters at each position
 
 % First detect boundaries of outermost yellow (255) pixels in order to get
 % rid of padding on outside
 
-% keyboard;
 dimY = size(board, 1);
 dimX = size(board, 2);
 
@@ -45,35 +44,32 @@ for l=1:dimX
 end
 
 newBoard = board(top:bottom, left:right);
-% newBoard = 255*ones(size(newBoard))-newBoard;
-% keyboard;
 
 % Now split into windows and detect letters
 load('Letters.mat');
-% letIm = cell(4, 4);
 theLetters = cell(4, 4);
-realLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Qu', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+realLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 [newDimY, newDimX] = size(newBoard);
 cutPointsY = [1 round(newDimY/4) round(newDimY/2) round(3*newDimY/4) newDimY];
 cutPointsX = [1 round(newDimX/4) round(newDimX/2) round(3*newDimX/4) newDimX];
 for i = 1:4
     for j=1:4
-        letCorrs = zeros(1, 104);
+        % Use a matched filter, calculate correlation, then pick the
+        % highest correlation
+        letCorrs = zeros(1, length(letters));
         letIm = newBoard(cutPointsY(i):cutPointsY(i+1), cutPointsX(j):cutPointsX(j+1));
-        letIm = imfilter(letIm, fspecial('gaussian', [5 5], 2), 'same');
-        letIm = 255*(letIm>200);
-        for k = 1:104
+        letIm = removePadding(letIm);
+        letIm = letIm - mean(letIm(:));
+
+        for k = 1:length(letters);
             actualLetIm = letters{k};
             actualLetIm = imresize(actualLetIm, size(letIm));
             letCorrs(k) = sum(sum(actualLetIm.*letIm));
         end
+        
         [~, idx] = max(letCorrs);
-%         figure(1);clf;
-%         imagesc(letIm);
-%         figure(2);clf;
-%         imagesc(letters{ceil(idx)});
-%         pause;
-        theLetters{i, j} = realLetters(ceil(idx/4));
+        theLetters{i, j} = realLetters(ceil(idx/20));
+
     end
 end
 end
