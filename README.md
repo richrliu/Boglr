@@ -30,3 +30,5 @@ Then use `imagesc(NewBoard)` to see the detected board.
 #### Data
 `Letters.mat` - Contains a cell array `letters` which contains matrices that represent images of each character rotated 4 times. Used in matched filter detection of each letter tile.
 
+## Report
+For detailed information, please see report.pdf.
